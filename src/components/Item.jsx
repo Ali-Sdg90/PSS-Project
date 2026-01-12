@@ -1,7 +1,7 @@
 import React from "react";
+import { gameType } from "../constants/gameItemTypes";
 
 const Item = ({ data }) => {
-    const gameType = ["paper", "scissor", "stone"];
     const gameIcon = ["📄", "✂️", "🪨"];
 
     return (

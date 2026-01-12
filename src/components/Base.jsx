@@ -1,82 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
 import Item from "./Item";
+
 import { DataContext } from "../store/Data/DataContext";
+import { maxMinChecker } from "../utils/maxMinChecker";
+import { gameType } from "../constants/gameItemTypes";
+import { gameLogic } from "../utils/gameLogic";
+import { moveItem } from "../utils/moveItem";
 
 const Base = () => {
     const { data, setData, appConfig } = useContext(DataContext);
-    const gameType = ["paper", "scissor", "stone"];
-
     const [_iteration, setIteration] = useState(0);
-
-    const moveItem = (item) => {
-        let x = item.x;
-        let y = item.y;
-        let vx = item.vx;
-        let vy = item.vy;
-
-        x += vx;
-        y += vy;
-
-        if (x <= appConfig.minItemSize) {
-            x = appConfig.minItemSize;
-            vx = -1 * vx;
-        }
-        if (x >= appConfig.maxItemSize) {
-            x = appConfig.maxItemSize;
-            vx = -1 * vx;
-        }
-        if (y <= appConfig.minItemSize) {
-            y = appConfig.minItemSize;
-            vy = -1 * vy;
-        }
-        if (y >= appConfig.maxItemSize) {
-            y = appConfig.maxItemSize;
-            vy = -1 * vy;
-        }
-
-        return [x, y, vx, vy];
-    };
-
-    const maxMinChecker = (number) => {
-        if (number <= appConfig.minItemSize) {
-            return appConfig.minItemSize;
-        } else if (number >= appConfig.maxItemSize) {
-            return appConfig.maxItemSize;
-        } else {
-            return number;
-        }
-    };
-
-    const gameLogic = (item1, item2) => {
-        // "📄📄", "✂️✂️", "🪨🪨"
-        if (item1 === item2) {
-            return "none";
-        }
-
-        // "📄", "🪨"
-        if (
-            (item1 === "stone" && item2 === "paper") ||
-            (item1 === "paper" && item2 === "stone")
-        ) {
-            return "paper";
-        }
-
-        // "✂️", "🪨"
-        if (
-            (item1 === "stone" && item2 === "scissor") ||
-            (item1 === "scissor" && item2 === "stone")
-        ) {
-            return "stone";
-        }
-
-        // "📄", "✂️"
-        if (
-            (item1 === "scissor" && item2 === "paper") ||
-            (item1 === "paper" && item2 === "scissor")
-        ) {
-            return "scissor";
-        }
-    };
 
     const killItem = (newData, killItemID) => {
         gameType.map((gameSingleType) => {
@@ -97,15 +30,19 @@ const Base = () => {
         const selectedItemID = newData[selectedItemType][index]["id"];
 
         const maxXRadios = maxMinChecker(
+            appConfig,
             newData[selectedItemType][index]["x"] + appConfig.detectionRadios
         );
         const minXRadios = maxMinChecker(
+            appConfig,
             newData[selectedItemType][index]["x"] - appConfig.detectionRadios
         );
         const maxYRadios = maxMinChecker(
+            appConfig,
             newData[selectedItemType][index]["y"] + appConfig.detectionRadios
         );
         const minYRadios = maxMinChecker(
+            appConfig,
             newData[selectedItemType][index]["y"] - appConfig.detectionRadios
         );
 
@@ -144,7 +81,10 @@ const Base = () => {
 
             gameType.map((gameSingleType) => {
                 for (let i = 0; i < newData[gameSingleType].length; i++) {
-                    const newValues = moveItem(newData[gameSingleType][i]);
+                    const newValues = moveItem(
+                        appConfig,
+                        newData[gameSingleType][i]
+                    );
                     newData[gameSingleType][i].x = newValues[0];
                     newData[gameSingleType][i].y = newValues[1];
                     newData[gameSingleType][i].vx = newValues[2];
@@ -167,12 +107,12 @@ const Base = () => {
 
     return (
         <>
-            <div className="score-component">
+            <div className="score-section">
                 <h2>Paper: {data.paper.length}</h2>
                 <h2>Scissor: {data.scissor.length}</h2>
                 <h2>Stone: {data.stone.length}</h2>
             </div>
-            <div className="base-component">
+            <div className="base-section">
                 <div className="base-container">
                     <Item data={data} />
                 </div>
