@@ -2,15 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import Item from "./Item";
 import { DataContext } from "../store/Data/DataContext";
 
-// const gameSpeed = 30;
-const gameSpeed = 100;
-const fixItemSize = 1.5;
-const minItemSize = 0 + fixItemSize;
-const maxItemSize = 100 - fixItemSize;
-const detectionRadios = 3;
-
 const Base = () => {
-    const { data, setData } = useContext(DataContext);
+    const { data, setData, appConfig } = useContext(DataContext);
     const gameType = ["paper", "scissor", "stone"];
 
     const [_iteration, setIteration] = useState(0);
@@ -24,20 +17,20 @@ const Base = () => {
         x += vx;
         y += vy;
 
-        if (x <= minItemSize) {
-            x = minItemSize;
+        if (x <= appConfig.minItemSize) {
+            x = appConfig.minItemSize;
             vx = -1 * vx;
         }
-        if (x >= maxItemSize) {
-            x = maxItemSize;
+        if (x >= appConfig.maxItemSize) {
+            x = appConfig.maxItemSize;
             vx = -1 * vx;
         }
-        if (y <= minItemSize) {
-            y = minItemSize;
+        if (y <= appConfig.minItemSize) {
+            y = appConfig.minItemSize;
             vy = -1 * vy;
         }
-        if (y >= maxItemSize) {
-            y = maxItemSize;
+        if (y >= appConfig.maxItemSize) {
+            y = appConfig.maxItemSize;
             vy = -1 * vy;
         }
 
@@ -45,10 +38,10 @@ const Base = () => {
     };
 
     const maxMinChecker = (number) => {
-        if (number <= minItemSize) {
-            return minItemSize;
-        } else if (number >= maxItemSize) {
-            return maxItemSize;
+        if (number <= appConfig.minItemSize) {
+            return appConfig.minItemSize;
+        } else if (number >= appConfig.maxItemSize) {
+            return appConfig.maxItemSize;
         } else {
             return number;
         }
@@ -100,6 +93,49 @@ const Base = () => {
         });
     };
 
+    const checkForKillings = (newData, selectedItemType, index) => {
+        const selectedItemID = newData[selectedItemType][index]["id"];
+
+        const maxXRadios = maxMinChecker(
+            newData[selectedItemType][index]["x"] + appConfig.detectionRadios
+        );
+        const minXRadios = maxMinChecker(
+            newData[selectedItemType][index]["x"] - appConfig.detectionRadios
+        );
+        const maxYRadios = maxMinChecker(
+            newData[selectedItemType][index]["y"] + appConfig.detectionRadios
+        );
+        const minYRadios = maxMinChecker(
+            newData[selectedItemType][index]["y"] - appConfig.detectionRadios
+        );
+
+        gameType.map((gameSingleType) => {
+            for (let i = 0; i < newData[gameSingleType].length; i++) {
+                if (
+                    newData[gameSingleType][i].id !== selectedItemID &&
+                    newData[gameSingleType][i].x > minXRadios &&
+                    newData[gameSingleType][i].x < maxXRadios &&
+                    newData[gameSingleType][i].y > minYRadios &&
+                    newData[gameSingleType][i].y < maxYRadios
+                ) {
+                    const winnerType = gameLogic(
+                        gameSingleType,
+                        selectedItemType
+                    );
+                    console.log("Winner >>", winnerType);
+
+                    if (winnerType === "none") {
+                        continue;
+                    } else if (winnerType === selectedItemType) {
+                        killItem(newData, newData[gameSingleType][i].id);
+                    } else {
+                        killItem(newData, selectedItemID);
+                    }
+                }
+            }
+        });
+    };
+
     useEffect(() => {
         const animate = () => {
             console.log("-------------------");
@@ -119,73 +155,29 @@ const Base = () => {
             setData(newData);
             setIteration((prevState) => prevState + 1);
 
-            // ---------------------------------------------------------------------
-
-            console.log(newData["stone"][0]["x"]);
-
-            const selectedItemType = "stone";
-
-            const selectedItemID = newData["stone"][0]["id"];
-            console.log("selectedItemID >>", selectedItemID);
-
-            const maxXRadios = maxMinChecker(
-                newData["stone"][0]["x"] + detectionRadios
-            );
-            const minXRadios = maxMinChecker(
-                newData["stone"][0]["x"] - detectionRadios
-            );
-            const maxYRadios = maxMinChecker(
-                newData["stone"][0]["y"] + detectionRadios
-            );
-            const minYRadios = maxMinChecker(
-                newData["stone"][0]["y"] - detectionRadios
-            );
-
-            console.log(maxXRadios);
-            console.log(minXRadios);
-
             gameType.map((gameSingleType) => {
                 for (let i = 0; i < newData[gameSingleType].length; i++) {
-                    if (
-                        newData[gameSingleType][i].id !== selectedItemID &&
-                        newData[gameSingleType][i].x > minXRadios &&
-                        newData[gameSingleType][i].x < maxXRadios &&
-                        newData[gameSingleType][i].y > minYRadios &&
-                        newData[gameSingleType][i].y < maxYRadios
-                    ) {
-                        console.log("YESSSSSSSSSSSSS");
-                        console.log(gameSingleType, selectedItemType);
-
-                        const winnerType = gameLogic(
-                            gameSingleType,
-                            selectedItemType
-                        );
-                        console.log("Winner >>", winnerType);
-
-                        if (winnerType === "none") {
-                            console.log("none");
-                            continue;
-                        } else if (winnerType === selectedItemType) {
-                            killItem(newData, newData[gameSingleType][i].id);
-                        } else {
-                            killItem(newData, selectedItemID);
-                        }
-
-                        debugger;
-                    }
+                    checkForKillings(newData, gameSingleType, i);
                 }
             });
         };
 
-        setInterval(animate, gameSpeed);
+        setInterval(animate, appConfig.gameSpeed);
     }, [data, setData]);
 
     return (
-        <div className="base-component">
-            <div className="base-container">
-                <Item data={data} />
+        <>
+            <div className="score-component">
+                <h2>Paper: {data.paper.length}</h2>
+                <h2>Scissor: {data.scissor.length}</h2>
+                <h2>Stone: {data.stone.length}</h2>
             </div>
-        </div>
+            <div className="base-component">
+                <div className="base-container">
+                    <Item data={data} />
+                </div>
+            </div>
+        </>
     );
 };
 

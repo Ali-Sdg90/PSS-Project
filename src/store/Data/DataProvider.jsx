@@ -1,11 +1,18 @@
 import { useState, useEffect } from "react";
 import { DataContext } from "./DataContext";
 
-const numberOfStones = 1;
-const numberOfPapers = 5;
-const numberOfScissors = 5;
-const maxSpeed = 1;
-const minSpeed = -1;
+const appConfig = {
+    numberOfStones: 50,
+    numberOfPapers: 50,
+    numberOfScissors: 50,
+    maxSpeed: 1,
+    minSpeed: -1,
+    gameSpeed: 30,
+    fixItemSize: 1.5,
+    minItemSize: 0 + 1.5,
+    maxItemSize: 100 - 1.5,
+    detectionRadios: 3,
+};
 
 export const DataProvider = ({ children }) => {
     const getRandomBetween = (min, max, isRound = true) => {
@@ -21,8 +28,8 @@ export const DataProvider = ({ children }) => {
             id: getRandomBetween(-100000, 100000),
             x: getRandomBetween(10, 90),
             y: getRandomBetween(10, 90),
-            vx: getRandomBetween(minSpeed, maxSpeed, false),
-            vy: getRandomBetween(minSpeed, maxSpeed, false),
+            vx: getRandomBetween(appConfig.minSpeed, appConfig.maxSpeed, false),
+            vy: getRandomBetween(appConfig.minSpeed, appConfig.maxSpeed, false),
         };
     };
 
@@ -37,13 +44,13 @@ export const DataProvider = ({ children }) => {
     };
 
     const [data, setData] = useState({
-        stone: createNumberOfBaseStart(numberOfStones),
-        paper: createNumberOfBaseStart(numberOfPapers),
-        scissor: createNumberOfBaseStart(numberOfScissors),
+        stone: createNumberOfBaseStart(appConfig.numberOfStones),
+        paper: createNumberOfBaseStart(appConfig.numberOfPapers),
+        scissor: createNumberOfBaseStart(appConfig.numberOfScissors),
     });
 
     return (
-        <DataContext.Provider value={{ data, setData }}>
+        <DataContext.Provider value={{ data, setData, appConfig }}>
             {children}
         </DataContext.Provider>
     );

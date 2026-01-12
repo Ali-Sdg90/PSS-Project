@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { DataContext } from "./store/Data/DataContext";
-import Score from "./components/Score";
 import Base from "./components/Base";
 
 const App = () => {
@@ -9,7 +8,6 @@ const App = () => {
     return (
         <div className="app-container">
             <h1>Paper Scissor Stone Battle Royal</h1>
-            <Score />
             <Base />
         </div>
     );
