@@ -3,9 +3,11 @@ import Item from "./Item";
 import { DataContext } from "../store/Data/DataContext";
 
 // const gameSpeed = 30;
-const gameSpeed = 1000;
+const gameSpeed = 100;
 const fixItemSize = 1.5;
-const detectionRadios = 5;
+const minItemSize = 0 + fixItemSize;
+const maxItemSize = 100 - fixItemSize;
+const detectionRadios = 3;
 
 const Base = () => {
     const { data, setData } = useContext(DataContext);
@@ -22,29 +24,85 @@ const Base = () => {
         x += vx;
         y += vy;
 
-        if (x <= 0 + fixItemSize) {
-            x = 0 + fixItemSize;
+        if (x <= minItemSize) {
+            x = minItemSize;
             vx = -1 * vx;
         }
-        if (x >= 100 - fixItemSize) {
-            x = 100 - fixItemSize;
+        if (x >= maxItemSize) {
+            x = maxItemSize;
             vx = -1 * vx;
         }
-        if (y <= 0 + fixItemSize) {
-            y = 0 + fixItemSize;
+        if (y <= minItemSize) {
+            y = minItemSize;
             vy = -1 * vy;
         }
-        if (y >= 100 - fixItemSize) {
-            y = 100 - fixItemSize;
+        if (y >= maxItemSize) {
+            y = maxItemSize;
             vy = -1 * vy;
         }
 
         return [x, y, vx, vy];
     };
 
+    const maxMinChecker = (number) => {
+        if (number <= minItemSize) {
+            return minItemSize;
+        } else if (number >= maxItemSize) {
+            return maxItemSize;
+        } else {
+            return number;
+        }
+    };
+
+    const gameLogic = (item1, item2) => {
+        // "📄📄", "✂️✂️", "🪨🪨"
+        if (item1 === item2) {
+            return "none";
+        }
+
+        // "📄", "🪨"
+        if (
+            (item1 === "stone" && item2 === "paper") ||
+            (item1 === "paper" && item2 === "stone")
+        ) {
+            return "paper";
+        }
+
+        // "✂️", "🪨"
+        if (
+            (item1 === "stone" && item2 === "scissor") ||
+            (item1 === "scissor" && item2 === "stone")
+        ) {
+            return "stone";
+        }
+
+        // "📄", "✂️"
+        if (
+            (item1 === "scissor" && item2 === "paper") ||
+            (item1 === "paper" && item2 === "scissor")
+        ) {
+            return "scissor";
+        }
+    };
+
+    const killItem = (newData, killItemID) => {
+        gameType.map((gameSingleType) => {
+            for (let i = 0; i < newData[gameSingleType].length; i++) {
+                if (newData[gameSingleType][i].id === killItemID) {
+                    console.log("KILLING", gameSingleType);
+
+                    newData[gameSingleType].splice(i, 1);
+
+                    setData(newData);
+                    setIteration((prevState) => prevState + 1);
+                }
+            }
+        });
+    };
+
     useEffect(() => {
         const animate = () => {
-            console.log("------------------- hi");
+            console.log("-------------------");
 
             const newData = data;
 
@@ -61,7 +119,62 @@ const Base = () => {
             setData(newData);
             setIteration((prevState) => prevState + 1);
 
+            // ---------------------------------------------------------------------
+
             console.log(newData["stone"][0]["x"]);
+
+            const selectedItemType = "stone";
+
+            const selectedItemID = newData["stone"][0]["id"];
+            console.log("selectedItemID >>", selectedItemID);
+
+            const maxXRadios = maxMinChecker(
+                newData["stone"][0]["x"] + detectionRadios
+            );
+            const minXRadios = maxMinChecker(
+                newData["stone"][0]["x"] - detectionRadios
+            );
+            const maxYRadios = maxMinChecker(
+                newData["stone"][0]["y"] + detectionRadios
+            );
+            const minYRadios = maxMinChecker(
+                newData["stone"][0]["y"] - detectionRadios
+            );
+
+            console.log(maxXRadios);
+            console.log(minXRadios);
+
+            gameType.map((gameSingleType) => {
+                for (let i = 0; i < newData[gameSingleType].length; i++) {
+                    if (
+                        newData[gameSingleType][i].id !== selectedItemID &&
+                        newData[gameSingleType][i].x > minXRadios &&
+                        newData[gameSingleType][i].x < maxXRadios &&
+                        newData[gameSingleType][i].y > minYRadios &&
+                        newData[gameSingleType][i].y < maxYRadios
+                    ) {
+                        console.log("YESSSSSSSSSSSSS");
+                        console.log(gameSingleType, selectedItemType);
+
+                        const winnerType = gameLogic(
+                            gameSingleType,
+                            selectedItemType
+                        );
+                        console.log("Winner >>", winnerType);
+
+                        if (winnerType === "none") {
+                            console.log("none");
+                            continue;
+                        } else if (winnerType === selectedItemType) {
+                            killItem(newData, newData[gameSingleType][i].id);
+                        } else {
+                            killItem(newData, selectedItemID);
+                        }
+
+                        debugger;
+                    }
+                }
+            });
         };
 
         setInterval(animate, gameSpeed);
