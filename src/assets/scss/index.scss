@@ -1,0 +1,36 @@
+@use "components/all";
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    transition: none !important;
+}
+
+body {
+    height: 100vh !important;
+    height: 100svh !important;
+    // overflow-y: hidden; TODO: Handle this
+    min-width: 780px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    // user-select: none;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+
+    &-track {
+        background-color: var(--bg-color);
+    }
+
+    &-thumb {
+        background-color: var(--thumb-bg-color);
+        border-radius: 10px;
+
+        &:hover {
+            background-color: rgb(155, 155, 155);
+        }
+    }
+}
