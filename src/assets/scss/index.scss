@@ -5,16 +5,15 @@
     margin: 0;
     box-sizing: border-box;
     transition: none !important;
+    font-family: sans-serif;
 }
 
 body {
     height: 100vh !important;
     height: 100svh !important;
-    // overflow-y: hidden; TODO: Handle this
     min-width: 780px;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    // user-select: none;
+    background-color: #333;
+    color: white;
 }
 
 ::-webkit-scrollbar {

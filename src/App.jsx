@@ -1,17 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
 import { DataContext } from "./store/Data/DataContext";
+import Score from "./components/Score";
+import Base from "./components/Base";
 
 const App = () => {
     const { data, setData } = useContext(DataContext);
 
-    useEffect(() => {
-        console.log(data);
-    }, []);
-
     return (
-        <>
-            <h1> hello</h1>
-        </>
+        <div className="app-container">
+            <h1>Paper Scissor Stone Battle Royal</h1>
+            <Score />
+            <Base />
+        </div>
     );
 };
 
