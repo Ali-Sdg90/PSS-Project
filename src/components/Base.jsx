@@ -2,12 +2,16 @@ import React, { useContext, useEffect, useState } from "react";
 import Item from "./Item";
 import { DataContext } from "../store/Data/DataContext";
 
+// const gameSpeed = 30;
+const gameSpeed = 1000;
+const fixItemSize = 1.5;
+const detectionRadios = 5;
+
 const Base = () => {
     const { data, setData } = useContext(DataContext);
     const gameType = ["paper", "scissor", "stone"];
-    const gameIcon = ["📄", "✂️", "🪨"];
 
-    const [iteration, setIteration] = useState(0);
+    const [_iteration, setIteration] = useState(0);
 
     const moveItem = (item) => {
         let x = item.x;
@@ -17,22 +21,21 @@ const Base = () => {
 
         x += vx;
         y += vy;
-        console.log(x);
 
-        if (x <= 0) {
-            x = 0;
+        if (x <= 0 + fixItemSize) {
+            x = 0 + fixItemSize;
             vx = -1 * vx;
         }
-        if (x >= 100) {
-            x = 100;
+        if (x >= 100 - fixItemSize) {
+            x = 100 - fixItemSize;
             vx = -1 * vx;
         }
-        if (y <= 0) {
-            y = 0;
+        if (y <= 0 + fixItemSize) {
+            y = 0 + fixItemSize;
             vy = -1 * vy;
         }
-        if (y >= 100) {
-            y = 100;
+        if (y >= 100 - fixItemSize) {
+            y = 100 - fixItemSize;
             vy = -1 * vy;
         }
 
@@ -46,7 +49,6 @@ const Base = () => {
             const newData = data;
 
             gameType.map((gameSingleType) => {
-                console.log(gameSingleType);
                 for (let i = 0; i < newData[gameSingleType].length; i++) {
                     const newValues = moveItem(newData[gameSingleType][i]);
                     newData[gameSingleType][i].x = newValues[0];
@@ -58,19 +60,19 @@ const Base = () => {
 
             setData(newData);
             setIteration((prevState) => prevState + 1);
+
+            console.log(newData["stone"][0]["x"]);
         };
 
-        setInterval(animate, 100);
+        setInterval(animate, gameSpeed);
     }, [data, setData]);
 
     return (
-        <>
-            <div className="base-component">
-                <div className="base-container">
-                    <Item data={data} />
-                </div>
+        <div className="base-component">
+            <div className="base-container">
+                <Item data={data} />
             </div>
-        </>
+        </div>
     );
 };
 

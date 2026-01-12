@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { DataContext } from "./DataContext";
 
+const numberOfStones = 1;
+const numberOfPapers = 5;
+const numberOfScissors = 5;
+
 export const DataProvider = ({ children }) => {
     const getRandomBetween = (min, max, isRound = true) => {
         if (isRound) {
@@ -20,10 +24,20 @@ export const DataProvider = ({ children }) => {
         };
     };
 
+    const createNumberOfBaseStart = (number) => {
+        const baseStartArray = [];
+
+        for (let i = 0; i < number; i++) {
+            baseStartArray.push(createBaseStart());
+        }
+
+        return baseStartArray;
+    };
+
     const [data, setData] = useState({
-        stone: [createBaseStart(), createBaseStart(), createBaseStart()],
-        paper: [createBaseStart()],
-        scissor: [createBaseStart(), createBaseStart()],
+        stone: createNumberOfBaseStart(numberOfStones),
+        paper: createNumberOfBaseStart(numberOfPapers),
+        scissor: createNumberOfBaseStart(numberOfScissors),
     });
 
     return (
