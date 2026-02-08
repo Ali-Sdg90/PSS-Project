@@ -1,6 +1,6 @@
 {
   "homepage": "https://ali-sdg90.github.io/PSS-Project/",
-  "name": "PSS-Project",
+  "name": "pss-project",
   "version": "1.0.0",
   "description": "Fun Project to pass time while the internet in my shitty country is blocked",
   "main": "./src/index.jsx",
