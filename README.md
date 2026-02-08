@@ -6,6 +6,8 @@ A dynamic, interactive game where paper, scissor, and stone entities battle each
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![React](https://img.shields.io/badge/React-18.3.1-61dafb.svg)
 
+![2026-02-0812-44-51_2-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/5089cb6c-283b-4390-a816-cb5175692bfb)
+
 ## 🌟 Features
 
 - **Real-time Battle System**: Entities automatically battle when they come into proximity
