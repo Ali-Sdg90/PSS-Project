@@ -1,8 +1,24 @@
-import { useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { DataContext } from "./DataContext";
 import { appConfig } from "../../constants/appConfig";
 
 export const DataProvider = ({ children }) => {
+    const nextIdRef = useRef(1);
+    const usedIdsRef = useRef(new Set());
+
+    const getNextId = () => {
+        let candidateId = nextIdRef.current;
+
+        while (usedIdsRef.current.has(candidateId)) {
+            candidateId += 1;
+        }
+
+        usedIdsRef.current.add(candidateId);
+        nextIdRef.current = candidateId + 1;
+
+        return candidateId;
+    };
+
     const getRandomBetween = (min, max, isRound = true) => {
         if (isRound) {
             return Math.round(Math.random() * (max - min) + min);
@@ -13,7 +29,7 @@ export const DataProvider = ({ children }) => {
 
     const createBaseStart = () => {
         return {
-            id: getRandomBetween(-100000, 100000),
+            id: getNextId(),
             x: getRandomBetween(appConfig.minItemSize, appConfig.maxItemSize),
             y: getRandomBetween(appConfig.minItemSize, appConfig.maxItemSize),
             vx: getRandomBetween(appConfig.minSpeed, appConfig.maxSpeed, false),

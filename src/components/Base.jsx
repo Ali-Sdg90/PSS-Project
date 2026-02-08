@@ -75,35 +75,45 @@ const Base = () => {
 
     useEffect(() => {
         const animate = () => {
-            console.log("-------------------");
+            setData((prevState) => {
+                console.log("-------------------");
 
-            const newData = data;
+                // const newData = data;
 
-            gameType.map((gameSingleType) => {
-                for (let i = 0; i < newData[gameSingleType].length; i++) {
-                    const newValues = moveItem(
-                        appConfig,
-                        newData[gameSingleType][i]
-                    );
-                    newData[gameSingleType][i].x = newValues[0];
-                    newData[gameSingleType][i].y = newValues[1];
-                    newData[gameSingleType][i].vx = newValues[2];
-                    newData[gameSingleType][i].vy = newValues[3];
-                }
+                const newData = {};
+                gameType.forEach((t) => {
+                    newData[t] = prevState[t].map((item) => ({ ...item }));
+                });
+
+                gameType.forEach((gameSingleType) => {
+                    for (let i = 0; i < newData[gameSingleType].length; i++) {
+                        const newValues = moveItem(
+                            appConfig,
+                            newData[gameSingleType][i]
+                        );
+                        newData[gameSingleType][i].x = newValues[0];
+                        newData[gameSingleType][i].y = newValues[1];
+                        newData[gameSingleType][i].vx = newValues[2];
+                        newData[gameSingleType][i].vy = newValues[3];
+                    }
+                });
+
+                gameType.forEach((gameSingleType) => {
+                    for (let i = 0; i < newData[gameSingleType].length; i++) {
+                        checkForKillings(newData, gameSingleType, i);
+                    }
+                });
+
+                return newData;
             });
 
-            setData(newData);
             setIteration((prevState) => prevState + 1);
-
-            gameType.map((gameSingleType) => {
-                for (let i = 0; i < newData[gameSingleType].length; i++) {
-                    checkForKillings(newData, gameSingleType, i);
-                }
-            });
         };
 
-        setInterval(animate, appConfig.gameSpeed);
-    }, [data, setData]);
+        const gameInterval = setInterval(animate, appConfig.gameSpeed);
+
+        return () => clearInterval(gameInterval);
+    }, [appConfig, setData]);
 
     return (
         <>
