@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/PSS-Project/static/css/main.584924c7.css",
+    "main.js": "/PSS-Project/static/js/main.45dbefe9.js",
+    "index.html": "/PSS-Project/index.html",
+    "main.584924c7.css.map": "/PSS-Project/static/css/main.584924c7.css.map",
+    "main.45dbefe9.js.map": "/PSS-Project/static/js/main.45dbefe9.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.584924c7.css",
+    "static/js/main.45dbefe9.js"
+  ]
+}
